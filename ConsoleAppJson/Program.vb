@@ -47,7 +47,6 @@ Module Program
     Sub Main(args As String())
 
         ' Path to the JSON file
-        'Dim filePath As String = "trainings.json"  ' only works with full C: path.
         Dim filePath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "trainings.json")
         Dim outputDirectory As String = "..\..\..\Data\"
 
