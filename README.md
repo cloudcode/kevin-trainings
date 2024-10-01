@@ -1,3 +1,3 @@
-###README
+README
 
 Sortings trainings with Kevin Merrifield
