@@ -160,7 +160,7 @@ Module Program
 
         ' Write Part 2 JSON output to file
         Dim part2Json As String = JsonSerializer.Serialize(fiscalYearData)
-        File.WriteAllText(Path.Combine(outputDirectory, "Part2_FiscalYearCompletions.json"), part1Json)
+        File.WriteAllText(Path.Combine(outputDirectory, "Part2_FiscalYearCompletions.json"), part2Json)
 
         Console.WriteLine("--------------")
 
@@ -229,7 +229,7 @@ Module Program
 
         ' Write Part 3 JSON output to file
         Dim part3Json As String = JsonSerializer.Serialize(expiryData)
-        File.WriteAllText(Path.Combine(outputDirectory, "Part3_ExpiredOrSoonToExpire.json"), part1Json)
+        File.WriteAllText(Path.Combine(outputDirectory, "Part3_ExpiredOrSoonToExpire.json"), part3Json)
 
     End Sub
 End Module
