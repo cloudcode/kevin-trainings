@@ -80,12 +80,6 @@ Module Program
 
         Console.WriteLine("--------------")
 
-
-
-
-
-
-
         ' Part 2: Filter people who completed specified trainings in the given fiscal year
         ' "Electrical Safety for Labs", "X-Ray Safety", "Laboratory Safety Training"; Fiscal Year = 2024    (not sure if I was supposed to read this in as an external variable?) 
         Dim fiscalYear = 2024
