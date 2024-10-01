@@ -173,20 +173,32 @@ Module Program
         Dim specifiedDate As New DateTime(2023, 10, 2)
         Dim expiresSoonThreshold As DateTime = specifiedDate.AddMonths(-1) ' 1 month before October 2nd, 2023
 
+        Dim expiryData As New List(Of ExpiryResult)
+
         Console.WriteLine(vbCrLf & $"People with trainings that have expired or will expire soon (as of {specifiedDate.ToShortDateString()}):")
 
         For Each person In persons
+            Dim expiryResult As New ExpiryResult With {
+                .personName = person.name,
+                .trainings = New List(Of ExpiryTraining)
+            }
             Dim hasExpiredOrSoonTraining As Boolean = False
 
             ' Check each training for expiration
             For Each completion In person.completions
                 Dim expirationDate As DateTime
 
+
                 ' Check if the training has an expiration date
                 If DateTime.TryParse(completion.expires, expirationDate) Then
 
                     ' Rule: Expires soon if it expires between September 2nd and October 2nd, 2023
                     If expirationDate >= expiresSoonThreshold AndAlso expirationDate <= specifiedDate Then
+                        expiryResult.trainings.Add(New ExpiryTraining With {
+                            .trainingName = completion.name,
+                            .status = "Expires Soon",
+                            .expirationDate = expirationDate.ToShortDateString()
+                        })
                         If Not hasExpiredOrSoonTraining Then
                             Console.WriteLine(vbCrLf & $"Person: {person.name}")
                             hasExpiredOrSoonTraining = True
@@ -194,6 +206,11 @@ Module Program
                         Console.WriteLine($"  Training: {completion.name}, Status: Expires Soon (on {expirationDate.ToShortDateString()})")
                         ' Rule: Expired if the expiration date is before October 2nd, 2023
                     ElseIf expirationDate < specifiedDate Then
+                        expiryResult.trainings.Add(New ExpiryTraining With {
+                            .trainingName = completion.name,
+                            .status = "Expired",
+                            .expirationDate = expirationDate.ToShortDateString()
+                        })
                         If Not hasExpiredOrSoonTraining Then
                             Console.WriteLine(vbCrLf & $"Person: {person.name}")
                             hasExpiredOrSoonTraining = True
@@ -202,8 +219,15 @@ Module Program
                     End If
                 End If
             Next
+
+            If expiryResult.trainings.Count > 0 Then
+                expiryData.Add(expiryResult)
+            End If
         Next
 
+        ' Write Part 3 JSON output to file
+        Dim part3Json As String = JsonSerializer.Serialize(expiryData)
+        File.WriteAllText("Part3_ExpiredOrSoonToExpire.json", part3Json)
 
     End Sub
 End Module

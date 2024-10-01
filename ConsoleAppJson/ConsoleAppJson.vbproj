@@ -11,6 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\net8.0\Part1_TrainingCompletionCounts.json" />
+    <Content Include="bin\Debug\net8.0\Part2_FiscalYearCompletions.json" />
+    <Content Include="bin\Debug\net8.0\Part3_ExpiredOrSoonToExpire.json" />
     <Content Include="trainings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
