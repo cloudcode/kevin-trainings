@@ -42,12 +42,14 @@ Module Program
     '                 *	Use parameters: Trainings = "Electrical Safety for Labs", "X-Ray Safety", "Laboratory Safety Training"; Fiscal Year = 2024
     '              3. Given a date, find all people that have any completed trainings that have already expired, or will expire within one month of the specified date (A training is considered expired the day after its expiration date). For each person found, list each completed training that met the previous criteria, with an additional field to indicate expired vs expires soon.
     '                 * Use date: Oct 1st, 2023
+    ' NOTE: The .json files are generated in the /Data directory
 
     Sub Main(args As String())
 
         ' Path to the JSON file
         'Dim filePath As String = "trainings.json"  ' only works with full C: path.
         Dim filePath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "trainings.json")
+        Dim outputDirectory As String = "..\..\..\Data\"
 
         ' Check if the file exists
         If Not File.Exists(filePath) Then
@@ -105,7 +107,7 @@ Module Program
         Next
 
         Dim part1Json As String = JsonSerializer.Serialize(trainingCountData)
-        File.WriteAllText("..\..\..\Data\Part1_TrainingCompletionCounts.json", part1Json)
+        File.WriteAllText(Path.Combine(outputDirectory, "Part1_TrainingCompletionCounts.json"), part1Json)
 
         Console.WriteLine("--------------")
 
@@ -158,7 +160,7 @@ Module Program
 
         ' Write Part 2 JSON output to file
         Dim part2Json As String = JsonSerializer.Serialize(fiscalYearData)
-        File.WriteAllText("..\..\..\Data\Part2_FiscalYearCompletions.json", part2Json)
+        File.WriteAllText(Path.Combine(outputDirectory, "Part2_FiscalYearCompletions.json"), part1Json)
 
         Console.WriteLine("--------------")
 
@@ -227,7 +229,7 @@ Module Program
 
         ' Write Part 3 JSON output to file
         Dim part3Json As String = JsonSerializer.Serialize(expiryData)
-        File.WriteAllText("..\..\..\Data\Part3_ExpiredOrSoonToExpire.json", part3Json)
+        File.WriteAllText(Path.Combine(outputDirectory, "Part3_ExpiredOrSoonToExpire.json"), part1Json)
 
     End Sub
 End Module
