@@ -1,3 +1,3 @@
 README
 
-Sortings trainings with Kevin Merrifield
+Sorting trainings with Kevin Merrifield
