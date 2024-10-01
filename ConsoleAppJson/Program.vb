@@ -16,6 +16,27 @@ Module Program
         Public Property completions As List(Of Completion)
     End Class
 
+    Public Class TrainingCount
+        Public Property trainingName As String
+        Public Property completionCount As Integer
+    End Class
+
+    Public Class TrainingFiscalYearResult
+        Public Property trainingName As String
+        Public Property completedBy As List(Of String)
+    End Class
+
+    Public Class ExpiryResult
+        Public Property personName As String
+        Public Property trainings As List(Of ExpiryTraining)
+    End Class
+
+    Public Class ExpiryTraining
+        Public Property trainingName As String
+        Public Property status As String
+        Public Property expirationDate As String
+    End Class
+
     ' Three parts: 1. List each completed training with a count of how many people have completed that training.
     '              2. Given a list of trainings and a fiscal year (defined as 7/1/n-1 – 6/30/n), for each specified training, list all people that completed that training in the specified fiscal year.
     '                 *	Use parameters: Trainings = "Electrical Safety for Labs", "X-Ray Safety", "Laboratory Safety Training"; Fiscal Year = 2024
@@ -41,6 +62,7 @@ Module Program
         Dim persons As List(Of Person) = JsonSerializer.Deserialize(Of List(Of Person))(jsonString)
 
         ' Part 1: Count the number of people who completed each training (only the most recent completion)
+        Dim trainingCountData As New List(Of TrainingCount)
         Dim trainingCount As New Dictionary(Of String, Integer)
 
         For Each person In persons
@@ -72,11 +94,18 @@ Module Program
         Next
         Console.WriteLine()
 
-        ' Display the training completion counts
+        ' Display the training completion counts and store the counts into a list for JSON output
         Console.WriteLine("Training Completion Counts (most recent only):" & vbCrLf)
         For Each kvp In trainingCount
             Console.WriteLine($"{kvp.Key}: {kvp.Value} people have completed this training.")
+            trainingCountData.Add(New TrainingCount With {
+                .trainingName = kvp.Key,
+                .completionCount = kvp.Value
+            })
         Next
+
+        Dim part1Json As String = JsonSerializer.Serialize(trainingCountData)
+        File.WriteAllText("Part1_TrainingCompletionCounts.json", part1Json)
 
         Console.WriteLine("--------------")
 
@@ -86,13 +115,20 @@ Module Program
         Dim startFiscalYear As New DateTime(fiscalYear - 1, 7, 1)
         Dim endFiscalYear As New DateTime(fiscalYear, 6, 30)
 
-        ' List of trainings to check
+        ' List of specified trainings to check
         Dim trainingsToCheck As String() = {"Electrical Safety for Labs", "X-Ray Safety", "Laboratory Safety Training"}
+
+        Dim fiscalYearData As New List(Of TrainingFiscalYearResult)
 
         ' Filter people who completed these trainings in the fiscal year (only most recent completion)
         Console.WriteLine(vbCrLf & $"People who completed specified trainings in Fiscal Year {fiscalYear}:")
 
         For Each training In trainingsToCheck
+            Dim result As New TrainingFiscalYearResult With {
+                .trainingName = training,
+                .completedBy = New List(Of String)
+            }
+
             Console.WriteLine(vbCrLf & $"Training: {training}")
 
             For Each person In persons
@@ -112,10 +148,17 @@ Module Program
 
                 ' Check if the most recent completion falls within the fiscal year
                 If mostRecentCompletion.HasValue AndAlso mostRecentCompletion.Value >= startFiscalYear AndAlso mostRecentCompletion.Value <= endFiscalYear Then
+                    result.completedBy.Add(person.name)
                     Console.WriteLine($"  {person.name} completed this training on {mostRecentCompletion.Value.ToShortDateString()}")
                 End If
             Next
+
+            fiscalYearData.Add(result)
         Next
+
+        ' Write Part 2 JSON output to file
+        Dim part2Json As String = JsonSerializer.Serialize(fiscalYearData)
+        File.WriteAllText("Part2_FiscalYearCompletions.json", part2Json)
 
         Console.WriteLine("--------------")
 
